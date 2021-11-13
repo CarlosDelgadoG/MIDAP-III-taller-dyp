@@ -16,8 +16,7 @@ knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
 ```{r}
 #Recodificaciones
 source('Recodificaciones.R', encoding = 'UTF-8', echo=FALSE)
-
-
+source('funciones midap.R', encoding = 'UTF-8', echo=FALSE)
 ```
 
 ## About the data
@@ -30,12 +29,45 @@ knitr::include_graphics("imagen_elsoc_coes.png")
 
 ## About PHQ-9
 
+
+## PHQ-9 Items (1-3)
+
+Over the last 2 weeks, how often have you been bothered
+by any of the following problems? 
+
+```{r}
+grafo_phq(c("s11_01_rec","s11_02_rec","s11_03_rec"),c("Little interest in things","Feeling down","Trouble with sleep"))
+```
+
+## PHQ-9 Items (4-6)
+
+Over the last 2 weeks, how often have you been bothered
+by any of the following problems? 
+
+```{r}
+grafo_phq(c("s11_04_rec","s11_05_rec","s11_06_rec"),c("Tired or little energy","Poor appetite or overeating","Feeling bad about yourself"))
+```
+
+## PHQ-9 Items (7-9)
+
+Over the last 2 weeks, how often have you been bothered
+by any of the following problems? 
+
+```{r}
+grafo_phq(c("s11_07_rec","s11_08_rec","s11_09_rec"),c("Trouble concentrating","Moving slowly or restless","Thoughts of hurting yourself"))
+```
+
+
+## Aggregated PHQ-9 score {.smaller}
+
+For each of the 9 items recode "Not at all" as 0, "Several days" as 1, "More than half the days" as 2, and "Nearly everyday" as 3. Then sum all items. The result is a score that ranges from 0 to 27.
+
 ```{r}
 ggplot(elsoc_2016,aes(x=s11_phq9))+
   geom_bar(fill="cornflowerblue",color="white")+
   labs(title = "Escala de sintomatología depresiva",
-       x="Puntaje PHQ-9",
-       y="Densidad")+
+       x="PHQ-9 Score",
+       y="Frecuency")+
   theme_classic()
 ```
 
