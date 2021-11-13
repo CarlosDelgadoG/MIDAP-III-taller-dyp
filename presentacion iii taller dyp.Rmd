@@ -1,0 +1,42 @@
+---
+title: "Modeling PHQ-9 Scores in Chilean Longitudinal Social Survey"
+author: "Carlos Delgado G."
+date: "13-11-2021"
+output: ioslides_presentation
+---
+
+
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(data.table)
+knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
+```
+
+```{r}
+#Recodificaciones
+source('Recodificaciones.R', encoding = 'UTF-8', echo=FALSE)
+
+
+```
+
+## About the data
+
+- [ELSOC-COES](https://coes.cl/encuesta-panel/)
+
+```{r}
+knitr::include_graphics("imagen_elsoc_coes.png")
+```
+
+## About PHQ-9
+
+```{r}
+ggplot(elsoc_2016,aes(x=s11_phq9))+
+  geom_bar(fill="cornflowerblue",color="white")+
+  labs(title = "Escala de sintomatología depresiva",
+       x="Puntaje PHQ-9",
+       y="Densidad")+
+  theme_classic()
+```
+
+
