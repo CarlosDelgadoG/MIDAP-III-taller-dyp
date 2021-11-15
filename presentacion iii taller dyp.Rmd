@@ -24,13 +24,16 @@ source('Recodificaciones.R', encoding = 'UTF-8', echo=FALSE)
 source('funciones midap.R', encoding = 'UTF-8', echo=FALSE)
 ```
 
+## About the research
+
+- **Main goal**
+- **Current state**
+
 ## About the data
 
-- [ELSOC-COES](https://coes.cl/encuesta-panel/)
-
-```{r}
-knitr::include_graphics("imagen_elsoc_coes.png")
-```
+- [ELSOC-COES](https://coes.cl/encuesta-panel/) Chilean Longitudinal Social Survey. 5 year panel data since, 2016. Aims to be representative of urban chilean population
+- More than 300 variables from different modules: *"Territory"*, *"Social attitudes and networks"*, *"Citizenship and Democracy"*,*"Inequality and Legitimacy"*, *"Social Conflict"*, *"Health and Wellbeing"*, *"Sociodemographic"*.
+- **Health and Wellbeing**: Life satisfaction, PHQ-9, Stressors, recient health issues, substances use, support networks, acces to health systems, BMI. 
 
 ## About PHQ-9
 
@@ -70,8 +73,7 @@ For each of the 9 items recode "Not at all" as 0, "Several days" as 1, "More tha
 ```{r}
 ggplot(elsoc_2016,aes(x=s11_phq9))+
   geom_bar(fill="cornflowerblue",color="white")+
-  labs(title = "Escala de sintomatología depresiva",
-       x="PHQ-9 Score",
+  labs(x="PHQ-9 Score",
        y="Frecuency")+
   theme_classic()
 ```
@@ -100,7 +102,7 @@ phq_boxplot("s08_fac",etiq = c("Non smoker","Smoker"))
 
 ## Differences in depressive sintoms (5)
 ```{r}
-phq_boxplot("s01_fac")
+phq_boxplot("s01_fac",etiq = c("Unsatisfied","Neither satisfied nor unsatisfied","Satisfied"))
 ```
 
 ## Modeling approaches for discrete over-disperse data
@@ -114,6 +116,15 @@ phq_boxplot("s01_fac")
 
 - You model two separate processes
 
+## Toy example ZINB Regression {.smaller}
+
+- **Gender**: Categorical. *"Male"*, *"Female"*.
+- **Stressors**: Number of vital events in the last year (death of family member, illnes, Job layoff, etc). Numeric 0-8
+- **Age**: Numeric 18-88.
+- **Smoker**: Categorical. *"Non Smoker"*, *"Smoker"*.
+- **Body Mass Index (BMI)**: Continuous, median value 26,83.
+- **Life Satisfaction**: Categorical *"Not Satisfied"* (Negative),*"Neither satisfied nor dissatisfied"* (Neutral), *"Satisfied"* (Positive).
+
 ## Modeling PHQ-9 Scores by ZINB regression {.reduced}
 
 
@@ -124,12 +135,12 @@ mod_zinb<- zeroinfl(s11_phq9~s_imc+m0_sexo_fac+s13_estresores+m0_edad+s01_fac+s0
 
 ```{r,results='asis',fig.height=5}
 texreg::htmlreg(mod_zinb,single.row=TRUE,
-                custom.coef.names=c("Count: Intercepto","Count: IMC","Count: Mujer","Count: Estresores",
-                                                             "Count: Edad","Count: Satisfacción Neutra","Count: Satisfacción Positiva",
-                                                             "Count: Fumador","Count: Theta",
-                                                             "Zero: Intercepto","Zero: IMC","Zero: Mujer","Zero: Estresores",
-                                                             "Zero: Edad","Zero: Satisfacción Neutra","Zero: Satisfacción Positiva",
-                                                             "Zero: Fumador"),
+                custom.coef.names=c("Count: Intercept","Count: BMI","Count: Female","Count: Stressors",
+                                                             "Count: Age","Count: Neutral Satisfaction","Count: Positive Satisfaction",
+                                                             "Count: Smoker","Count: Over dispersion parameter",
+                                                             "Zero: Intercept","Zero: BMI","Zero: Female","Zero: Stressors",
+                                                             "Zero: Age","Zero: Neutral Satisfaction","Zero: Positive Satisfaction",
+                                                             "Zero: Smoker"),
                 custom.model.name="Zero-Inflated Negative Binomial Regression")
 ```
 
@@ -138,17 +149,17 @@ texreg::htmlreg(mod_zinb,single.row=TRUE,
 ```{r}
 exp_coef<- exp(coefficients(mod_zinb))
 tabla_coef <- tibble("Variable"=unique(gsub(x=names(exp_coef),pattern = "count_|zero_",replace="")),
-       "Conteo"=matrix(exp(coefficients(mod_zinb)),ncol = 2)[,1],
+       "Count"=matrix(exp(coefficients(mod_zinb)),ncol = 2)[,1],
        "Zero"=matrix(exp(coefficients(mod_zinb)),ncol = 2)[,2])
 tabla_coef$Variable <- c("Intercept","BMI","Female","Stressors","Age","Neutral Satisfaction","Positive Satisfaction","Smoker")
   
-knitr::kable(tabla_coef)
+knitr::kable(tabla_coef,digits = 4)
 ```
 
 ## Count Effects in PHQ-9 Scores
 
 ```{r}
-grafo_eff("Conteo")
+grafo_eff("Count")
 ```
 
 ## Zero effects in PHQ-9 Scores
@@ -159,12 +170,29 @@ grafo_eff("Zero")
 
 ## What does that mean? Count part
 
+- A unit increase in **BMI** increases the mean phq-9 score by a factor of 1%. 
+- **Female** respondents have an increase un phq-9 score by a factor of 29%. 
+- Each **stresor** event that the respondandt has, its relatedof an increase of the mean phq-9 socre by a factor of 14%.
+- **Age** and being an **Smoker** are not statistical significant for predicting phq-9 scores.
+
+
 ## What does that mean? Zero part
 
+- Being **Female** decreases by a factor of 46% of not having any symptoms (a zero score).
+- Each **stressor** in the last year of the respondent decreasess by a factor of  40%.
+- **Positive** life satisfaction increases the chances by a factor of 2.36 more than base line (Being **"Unsatisfied"**).
+- **BMI**, **Neutral satisfaction** and **Smoker** are not relevant for predicting zero counts.
+
+
 ## Future directions
+
+- Assesing binomial
+- Adding the longitudinal 
+- Variable selection
+- Controlling missing data, adding sample weights, control panel attrition. 
 
 ## I'm happy to hear about
 
 - Applications of PHQ-9
-- Faactor in depressive sintoms
+- Relevant factors in depressive symptoms
 - Mental Health in Chile (Specially data bases)
