@@ -2,6 +2,7 @@
 
 # GRAFO PHQ ---------------------------------------------------------------
 grafo_phq <- function(vars,etiq){
+  
   to_long <- function(var){
     var_tidy <- as.name(var)
     base <- select(elsoc_2016, !!var_tidy)
@@ -32,4 +33,41 @@ grafo_phq <- function(vars,etiq){
                labeller = labeller(variable=nombres.facet(viejos = vars,
                                                           nuevos = etiq)))
   return(ggp)
+}
+
+# PHQ BOXPLOT ---------------------------------------------------------------
+phq_boxplot <- function(var,titulo=NULL,etiq=NULL){
+  
+  var_tidy <- as.name(var)
+  
+  ggp<- ggplot(elsoc_2016,aes(x=!!var_tidy,y=s11_phq9))+
+    geom_boxplot(color="#0db783")+
+    labs(y="PHQ-9 Score",
+         x=element_blank(),
+         title = titulo)+
+    theme_classic()+
+    scale_x_discrete(labels=stringr::str_wrap(levels(getElement(elsoc_2016,var)), width =7),
+                     na.translate=FALSE)
+  if(!is.null(etiq)){
+    ggp <- ggp+
+      scale_x_discrete(labels=stringr::str_wrap(etiq, width =7),
+                       na.translate=FALSE)
+  }
+  
+  
+  return(ggp)
+}
+
+
+# GRAFO COEFICIENTES ------------------------------------------------------
+
+grafo_eff <- function(var){
+  var_tidy <- as.name(var)
+  tabla_coef%>%
+    mutate(cont_eff= !!var_tidy >1)%>%
+    filter(Variable != "Intercept")%>%
+    ggplot(aes(x=factor(Variable),y=!!var_tidy,color=cont_eff))+
+    geom_point()+
+    geom_hline(yintercept = 1,lty=2,color="cornflowerblue")+
+    theme_classic()
 }
