@@ -63,11 +63,15 @@ phq_boxplot <- function(var,titulo=NULL,etiq=NULL){
 
 grafo_eff <- function(var){
   var_tidy <- as.name(var)
-  tabla_coef%>%
+  tabla_grafo<-   tabla_coef%>%
     mutate(cont_eff= !!var_tidy >1)%>%
-    filter(Variable != "Intercept")%>%
-    ggplot(aes(x=factor(Variable),y=!!var_tidy,color=cont_eff))+
+    filter(Variable != "Intercept")
+  
+  ggplot(tabla_grafo,aes(x=factor(Variable),y=!!var_tidy,color=cont_eff))+
     geom_point()+
     geom_hline(yintercept = 1,lty=2,color="cornflowerblue")+
-    theme_classic()
+    theme_classic()+
+    labs(x="Variables")+
+    scale_x_discrete(labels=stringr::str_wrap(levels(factor(tabla_grafo$Variable)), width =7))+
+    theme(legend.position = "none")
 }
