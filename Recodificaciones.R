@@ -30,7 +30,7 @@ attr(elsoc_2016$s14_fac,"label") <- "Tratamiento por Depresión"
 #Satisfacción con la vida
 elsoc_2016$s01_fac <- factor(car::recode(elsoc_2016$s01,"c(1,2)=1;3=2;c(4,5)=3"),
                              levels = c(1,2,3),
-                             labels = c("Instatisfecho",
+                             labels = c("Insatisfecho",
                                         "Ni satisfecho ni insatisfecho",
                                         "Satisfecho"))
 
