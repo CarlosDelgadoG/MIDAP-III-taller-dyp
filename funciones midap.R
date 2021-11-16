@@ -1,5 +1,3 @@
-
-
 # GRAFO PHQ ---------------------------------------------------------------
 grafo_phq <- function(vars,etiq){
   
@@ -11,8 +9,16 @@ grafo_phq <- function(vars,etiq){
     colnames(base)<- c("valor","variable")
     base$valor <- factor(base$valor,
                          labels=c('Not at all','Several days','More than half','Nearly everyday'))
-    return(base)
+    tabla <-  base%>%   
+      group_by(valor)%>%
+      summarise(count=n())%>%
+      drop_na()%>%
+      mutate(prop=count/sum(count),
+             perc=paste(round(prop*100,1),"%"),
+             variable=factor(rep(var,nrow(.))))
+    return(tabla)
   }
+  
   
   nombres.facet<- function(viejos, nuevos){
     var.labs <- nuevos
@@ -23,18 +29,20 @@ grafo_phq <- function(vars,etiq){
   
   base_grafo<- bind_rows(lapply(vars, to_long))
   
-  ggp<- ggplot(base_grafo,aes(x=valor))+
-    geom_bar(fill="#9932CC",color="white")+
-    labs(y="Frequency",
+  ggp<- ggplot(base_grafo,aes(x=valor,y=prop))+
+    geom_col(fill="#9932CC",color="white")+
+    geom_text(aes(label=perc,vjust=-.5),color = "black",position=position_dodge())+
+    labs(y="Proportion",
          x=element_blank())+
-    theme_classic()+
+    
     scale_x_discrete(labels=stringr::str_wrap(levels(base_grafo$valor), width =7),na.translate=FALSE)+
     facet_wrap(~variable,
                labeller = labeller(variable=nombres.facet(viejos = vars,
-                                                          nuevos = etiq)))
+                                                          nuevos = etiq)))+
+    scale_y_continuous(labels = scales::percent_format(accuracy = 1))+
+    theme_classic()
   return(ggp)
 }
-
 # PHQ BOXPLOT ---------------------------------------------------------------
 phq_boxplot <- function(var,titulo=NULL,etiq=NULL){
   
