@@ -26,8 +26,11 @@ source('funciones midap.R', encoding = 'UTF-8', echo=FALSE)
 
 ## About the research
 
-- **Main goal**
-- **Current state**
+- **Interest** Asses which gruops of people have the more severe and persistent depressive symptoms
+- **Research goal** To model the longitudinal aspect of PHQ-9 Scores in ELSOC participants
+- **Metodology** Generalized linear mixed effects models
+- **Current state** Trying different models for the first year of the study
+- **Presentation** Count models that take into account the excess of zeros.
 
 ## About the data
 
@@ -105,25 +108,43 @@ phq_boxplot("s08_fac",etiq = c("Non smoker","Smoker"))
 phq_boxplot("s01_fac",etiq = c("Unsatisfied","Neither satisfied nor unsatisfied","Satisfied"))
 ```
 
-## Modeling approaches for discrete over-disperse data
 
+## Modeling approaches for discrete over-disperse data {.smaller}
+
+<div style="float: left; width: 30%;">
+- Against the normal model
+- We want count probabilities
 - The Poisson Model
 - Over disperse data
 - Excess of ceros
-- We want count probabilities
+</div>
+
+<div style="float: right; width: 70%;">
+
+```{r,fig.width=6}
+ggplot(elsoc_2016,aes(x=s11_phq9))+
+  geom_bar(fill="cornflowerblue",color="white")+
+  labs(x="PHQ-9 Score",
+       y="Frecuency")+
+  theme_classic()
+```
+
+</div>
 
 ## Zero-inflated Negative Binomial (ZINB) Regression
 
-- You model two separate processes
+- You model two separate processes:
+-     PHQ-9 score > 1
+-     Having a 0 PHQ-9 score
 
 ## Toy example ZINB Regression {.smaller}
 
-- **Gender**: Categorical. *"Male"*, *"Female"*.
-- **Stressors**: Number of vital events in the last year (death of family member, illnes, Job layoff, etc). Numeric 0-8
+- **Gender**: Categorical: *"Male"*, *"Female"*.
+- **Stressors**: Number of vital events in the last year (death of family member, illnes, Job layoff, etc). Numeric 0-8.
 - **Age**: Numeric 18-88.
-- **Smoker**: Categorical. *"Non Smoker"*, *"Smoker"*.
+- **Smoker**: Categorical: *"Non Smoker"*, *"Smoker"*.
 - **Body Mass Index (BMI)**: Continuous, median value 26,83.
-- **Life Satisfaction**: Categorical *"Not Satisfied"* (Negative),*"Neither satisfied nor dissatisfied"* (Neutral), *"Satisfied"* (Positive).
+- **Life Satisfaction**: Categorical: *"Not Satisfied"* (Negative),*"Neither satisfied nor dissatisfied"* (Neutral), *"Satisfied"* (Positive).
 
 ## Modeling PHQ-9 Scores by ZINB regression {.reduced}
 
