@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo = FALSE,message = FALSE,warning = FALSE)
 ```{r}
 #Recodificaciones
 source('Recodificaciones.R', encoding = 'UTF-8', echo=FALSE)
-source('funciones midap.R', encoding = 'UTF-8', echo=FALSE)
+source('SCRPIT/funciones midap.R', encoding = 'UTF-8', echo=FALSE)
 ```
 
 ## About my research
