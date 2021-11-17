@@ -24,19 +24,22 @@ source('Recodificaciones.R', encoding = 'UTF-8', echo=FALSE)
 source('funciones midap.R', encoding = 'UTF-8', echo=FALSE)
 ```
 
-## About the research
+## About my research
 
-- **Interest** Asses which groups of people have the more severe and persistent depressive symptoms (as measured by PHQ-9).
-- **Research goal** To model the longitudinal aspect of PHQ-9 Scores in ELSOC participants.
-- **Metodology** Generalized linear mixed effects models.
-- **Current state** Exploring probability distributions for the first year of the study.
-- **Presentation** Count models that take into account the excess of zeros.
+- **Broad Interest**: Asses which groups of people have the more severe and persistent depressive symptoms (as measured by PHQ-9).
+- **Research goal**: To model the longitudinal variations of PHQ-9 scores among ELSOC participants.
+- **Metodology**: Generalized linear mixed effects models.
+- **Current state**: Exploring probability distributions for the first year of the study.
+- **Today's Presentation**: A discrete data probability model that take into account the excess of zeros (ZINB regression).
 
 ## About the data
 
-- [ELSOC-COES](https://coes.cl/encuesta-panel/) Chilean Longitudinal Social Survey. 5 year panel data since, 2016. Aims to be representative of urban chilean population
+- [ELSOC-COES](https://coes.cl/encuesta-panel/) Chilean Longitudinal Social Survey. 5 year panel data of adults since 2016. Aims to be representative of urban chilean population.
 - More than 300 variables from different modules: *"Territory"*, *"Social attitudes and networks"*, *"Citizenship and Democracy"*,*"Inequality and Legitimacy"*, *"Social Conflict"*, *"Health and Wellbeing"*, *"Sociodemographic"*.
-- **Health and Wellbeing**: Life satisfaction, PHQ-9, Stressors, recient health issues, substances use, support networks, acces to health systems, BMI. 
+- **Health and Wellbeing**: Life satisfaction, PHQ-9, Stressors, recient health issues, substances use, support networks, acces to health systems, BMI.
+- You have PHQ-9 scores for the same group of adults each wave of the study, with hundreds of variables to play with. 
+
+# PHQ-9 Scores in ELSOC respondents (First wave)
 
 ## PHQ-9 Items (1-3)
 
@@ -78,39 +81,39 @@ ggplot(elsoc_2016,aes(x=s11_phq9))+
   theme_classic()
 ```
 
-## Differences in depressive sintoms (1)
+## Differences in depressive symptoms (1)
 
 ```{r}
 phq_boxplot("m0_sexo_fac","PHQ-9 Scores by gender",etiq = c("Male", "Female"))
 ```
 
-## Differences in depressive sintoms (2)
+## Differences in depressive symptoms (2)
 
 ```{r}
-phq_boxplot("m02_fac", etiq = c("Employed","Domestic Labour","Retired","Unemployed","Other Categories"))
+phq_boxplot("m02_fac", "PHQ-9 Scores by Occupation", etiq = c("Employed","Domestic Labour","Retired","Unemployed","Other Categories"))
 ```
 
-## Differences in depressive sintoms (3)
+## Differences in depressive symptoms (3)
 ```{r}
-phq_boxplot("s_imc_fac",etiq = c("Normal","Overweight","Obese"))
+phq_boxplot("s_imc_fac","PHQ-9 Scores by BMI categories",etiq = c("Normal","Overweight","Obese"))
 ```
 
-## Differences in depressive sintoms (4)
+## Differences in depressive symptoms (4)
 ```{r}
-phq_boxplot("s08_fac",etiq = c("Non smoker","Smoker"))
+phq_boxplot("s08_fac","PHQ-9 scores between Smokers and Non Smokers",etiq = c("Non smoker","Smoker"))
 ```
 
-## Differences in depressive sintoms (5)
+## Differences in depressive symptoms (5)
 ```{r}
-phq_boxplot("s01_fac",etiq = c("Unsatisfied","Neither satisfied nor unsatisfied","Satisfied"))
+phq_boxplot("s01_fac","PHQ-9 scores by life satisfaction",etiq = c("Unsatisfied","Neither satisfied nor unsatisfied","Satisfied"))
 ```
 
+# How can we model discrete over-disperse data?
 
 ## Modeling approaches for discrete over-disperse data {.smaller}
 
 <div style="float: left; width: 30%;">
 - Against the normal model
-- We want count probabilities
 - The Poisson Model
 - Over disperse data (Negative Binomial)
 - Excess of ceros (Zero-Inflated)
@@ -128,7 +131,9 @@ ggplot(elsoc_2016,aes(x=s11_phq9))+
 
 </div>
 
-## Zero-inflated Negative Binomial (ZINB) Regression
+# Zero-Inflated Negative Binomial Regression
+
+##  ZINB Regression
 
 - You model two separate processes:
 -     PHQ-9 score > 1
@@ -201,6 +206,8 @@ grafo_eff("Zero")
 - **Positive** life satisfaction increases the chances of having a zero PHQ-9 score by a factor of 2.36 more than baseline (Being **"Unsatisfied"**).
 - **BMI**, **Neutral satisfaction** and **Smoker** are not relevant for predicting  a zero PHQ-9 score.
 
+# Predicting PHQ-9 by ZINBR
+
 ## Predicting PHQ-9 Scores
 
 Let's think about two people:
@@ -258,3 +265,4 @@ tibble("x"=factor(0:27),
 - Applications of PHQ-9 in longitudinal settings.
 - Relevant factors in severity and persistance of depressive symptoms.
 
+# Thank you!
